@@ -11,10 +11,20 @@ class AuthorRepository:
         self.authors.append(author)
 
     def update(self, author):
-        pass
-
+        for i in self.authors:
+            if i.ID==author.ID:
+                i.first_name = author.first_name
+                i.last_name = author.last_name
+                i.image_url = author.image_url
+                return i
+            return None
+        
     def remove(self, ID):
-        pass
+        for author in self.authors:
+            if author.ID == ID:
+                self.authors.remove(author)
+                return True
+            return False
 
     def get_authors(self):
         return self.authors

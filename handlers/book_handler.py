@@ -34,3 +34,33 @@ async def get_books():
 async def get_book(id: int):
     book = book_repository.get_book_by_id(id)
     return book
+
+@book_router.delete("/api/books/{id}", tags=["books"])
+async def delete_book(id: int):
+    result = book_repository.delete_book(id)
+    if result:
+        return {"message": "Book deleted"}
+    return {"message": "Book not found"}
+
+@book_router.put("/api/books/{id}", tags=["books"])
+async def update_book(
+    id: int,
+    title: str,
+    description: str,
+    authorID: int,
+    file_url: str
+):
+    author = author_repository.get_author_by_id(authorID)
+    if author is None:
+        return {"message": "Author not found"}
+    book = Book(
+        title=title,
+        description=description,
+        author=author,
+        file_url=file_url
+    )
+    book.ID = id
+    updated_book = book_repository.update_book(book)
+    if updated_book:
+        return {"message": "Book updated"}
+    return {"message": "Book not found"}
