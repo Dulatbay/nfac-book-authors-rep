@@ -32,3 +32,30 @@ async def create_author(response: Response,
     response.status_code = status.HTTP_201_CREATED
     return response
 
+@app.delete("/api/authors/{id}")
+async def delete_author(id: int):
+    result = author_repository.remove(id)
+    if result:
+        return {"Author deleted"}
+    return {"Author not found"}
+
+@app.put("/api/authors/{id}")
+async def update_author(
+    id: int,
+    first_name: str,
+    last_name: str,
+    image_url: str
+):
+    author = Author(
+        first_name=first_name,
+        last_name=last_name,
+        image_url=image_url
+    )
+    author.ID = id
+    updated_author = author_repository.update(author)
+    if updated_author:
+        return {"message": "Author updated"}
+    return {"message": "Author not found"}
+
+
+    
