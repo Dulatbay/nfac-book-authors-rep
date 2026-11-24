@@ -29,6 +29,11 @@ class AuthorRepository:
                 return i
         return None
 
+    def get_author_by_username(self, username: str):
+        for i in self.authors:
+            if i.username == username:
+                return i
+        return None
 
 
 author_repository = AuthorRepository()

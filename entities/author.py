@@ -1,13 +1,16 @@
+from dto.AuthCreateRequest import AuthCreateRequest
 from entities.book import Book
 
 
 class Author:
-    def __init__(self, first_name, last_name, image_url):
+    def __init__(self, authRequest: AuthCreateRequest):
         self.ID = -1
-        self.first_name = first_name
-        self.last_name = last_name
-        self.image_url = image_url
+        self.first_name = authRequest.first_name
+        self.last_name = authRequest.last_name
+        self.image_url = authRequest.image_url
         self.books = []
+        self.password = authRequest.password
+        self.username = authRequest.username
 
 
     def calculate_rating(self):
