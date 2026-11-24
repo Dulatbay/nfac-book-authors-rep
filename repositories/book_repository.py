@@ -1,3 +1,4 @@
+# TODO: add type
 class BookRepository:
     def __init__(self):
         self.ID = 0

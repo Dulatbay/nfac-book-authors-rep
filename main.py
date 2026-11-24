@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Request, Response, Form
+from email.policy import default
+
+from fastapi import FastAPI, Request, Response, Form, Cookie
 from starlette import status
 
 from entities.author import Author
@@ -8,8 +10,11 @@ from repositories.author_repository import author_repository
 app = FastAPI()
 
 
+# TODO: add JWT authorization
+
 app.include_router(book_router)
 
+# TODO: reformat to routes
 @app.get("/api/authors")
 async def get_authors(request: Request):
     authors = author_repository.get_authors()
@@ -21,6 +26,7 @@ async def get_author(id: int):
     return author
 
 
+# TODO: reformat to basemodel
 @app.post("/api/authors")
 async def create_author(response: Response,
                         first_name: str = Form(...),
@@ -32,3 +38,6 @@ async def create_author(response: Response,
     response.status_code = status.HTTP_201_CREATED
     return response
 
+
+
+# TODO: frontend
