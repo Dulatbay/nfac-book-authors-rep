@@ -31,7 +31,8 @@ def auth(username="alice", password="secret1"):
 def test_register_hides_password_and_rejects_duplicates():
     data = register()
     assert "password" not in data and "password_hash" not in data
-    r = client.post("/api/auth/register", json={"first_name": "A", "last_name": "B", "username": "alice", "password": "secret1"})
+    dup = {"first_name": "A", "last_name": "B", "username": "alice", "password": "secret1"}
+    r = client.post("/api/auth/register", json=dup)
     assert r.status_code == 409
 
 
@@ -49,7 +50,8 @@ def test_login_and_me():
 
 
 def test_books_crud_and_rating():
-    register(); register("bob")
+    register()
+    register("bob")
     h_alice, h_bob = auth(), auth("bob")
     payload = {"title": "Book", "description": "d", "file_url": "https://x.com/a.pdf"}
 
@@ -73,7 +75,8 @@ def test_books_crud_and_rating():
 
 
 def test_author_update_delete():
-    a = register(); register("bob")
+    a = register()
+    register("bob")
     assert client.patch(f"/api/authors/{a['id']}", json={"first_name": "Z"}, headers=auth("bob")).status_code == 403
     assert client.patch(f"/api/authors/{a['id']}", json={"first_name": "Z"}, headers=auth()).json()["first_name"] == "Z"
     assert client.get("/api/authors/999").status_code == 404

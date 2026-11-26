@@ -45,8 +45,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Aut
     )
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
-    except InvalidTokenError:
-        raise credentials_exception
+    except InvalidTokenError as err:
+        raise credentials_exception from err
     username = payload.get("sub")
     if not username:
         raise credentials_exception
