@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, Response, status
 
 from core.security import CurrentUser
+from handlers.auth_handler import register
 from repositories.author_repository import author_repository
 from repositories.book_repository import book_repository
 from schemas.author import AuthorCreate, AuthorOut, AuthorUpdate
 from schemas.book import BookOut
 from schemas.mappers import author_out, book_out
-from handlers.auth_handler import register
 
 author_router = APIRouter(prefix="/api/authors", tags=["authors"])
 
