@@ -49,3 +49,34 @@ tests/         pytest
 ```bash
 pytest -q
 ```
+
+## Docker
+
+```bash
+cp .env.example .env
+docker compose up --build            # app :8000, Postgres :5432, Adminer :8080
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build   # с hot-reload
+```
+
+## Подготовка к БД (лекция: SQLAlchemy + Alembic)
+
+Код для БД уже написан, но **закомментирован**, приложение пока работает in-memory.
+
+| Файл | Что внутри |
+|---|---|
+| `core/database.py` | `DATABASE_URL`, `engine` (пул соединений), `SessionLocal`, `Base`, `get_db` с `yield` |
+| `models/` | ORM-модели: `AuthorModel` 1→N `BookModel`, оценки `RatingModel` (M:N автор↔книга) |
+| `repositories/sql_*_repository.py` | Repository на Query API: `filter`, `offset/limit`, `add → commit → refresh` |
+| `alembic.ini`, `alembic/env.py` | `target_metadata = Base.metadata`, URL из `DATABASE_URL` |
+| `alembic/versions/` | первая миграция `initial schema` |
+
+Чтобы включить:
+1. Раскомментировать зависимости в `requirements.txt` и файлы выше.
+2. В хендлерах заменить in-memory репозитории на `SqlAuthorRepository(db)` / `SqlBookRepository(db)` с `db: Session = Depends(get_db)`. Pydantic-схемы оставить для входа, чтобы не было Mass Assignment.
+3. В `docker-compose.yml` раскомментировать `command` с `alembic upgrade head`.
+
+```bash
+alembic revision --autogenerate -m "description"
+alembic upgrade head
+alembic downgrade -1
+```
