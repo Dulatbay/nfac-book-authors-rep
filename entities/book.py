@@ -1,16 +1,24 @@
-# Book
-# ID
-# title
-# description
-# authorID
-# rating
-# file_url UNIQE -> PDF, DOCX
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from entities.author import Author
 
 
+@dataclass
 class Book:
-    def __init__(self, title, description, file_url, author):
-        self.ID = -1
-        self.title = title
-        self.description = description
-        self.file_url = file_url
-        self.author = author
+    title: str
+    description: str
+    file_url: str  # уникальный, ссылка на PDF/DOCX
+    author: Author
+    ID: int = -1
+    # username оценившего -> оценка 1..5
+    ratings: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def rating(self) -> float | None:
+        if not self.ratings:
+            return None
+        return round(sum(self.ratings.values()) / len(self.ratings), 2)

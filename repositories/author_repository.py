@@ -1,40 +1,40 @@
-# TODO: add type
+from entities.author import Author
+
+
 class AuthorRepository:
-    def __init__(self):
-        self.ID = 0
-        self.authors = []
-        pass
+    """In-memory хранилище авторов (до подключения БД)."""
 
+    def __init__(self) -> None:
+        self._next_id = 0
+        self._authors: dict[int, Author] = {}
 
-    def add(self, author):
-        self.ID += 1
-        author.ID = self.ID
-        self.authors.append(author)
+    def add(self, author: Author) -> Author:
+        self._next_id += 1
+        author.ID = self._next_id
+        self._authors[author.ID] = author
+        return author
 
-    def update(self, author):
-        pass
+    def update(self, author: Author) -> Author:
+        if author.ID not in self._authors:
+            raise KeyError(author.ID)
+        self._authors[author.ID] = author
+        return author
 
-    def remove(self, ID):
-        pass
+    def remove(self, author_id: int) -> bool:
+        return self._authors.pop(author_id, None) is not None
 
-    def get_authors(self):
-        return self.authors
+    def get_all(self) -> list[Author]:
+        return list(self._authors.values())
 
-    def get_author_by_id(self, ID: int):
-        print("ID", ID)
-        print("authors", self.authors)
-        for i in self.authors:
-            print("i.id", i.ID, i.ID == ID)
-            if +i.ID == +ID:
-                return i
-        return None
+    def get_by_id(self, author_id: int) -> Author | None:
+        return self._authors.get(author_id)
 
-    def get_author_by_username(self, username: str):
-        for i in self.authors:
-            if i.username == username:
-                return i
-        return None
+    def get_by_username(self, username: str) -> Author | None:
+        return next((a for a in self._authors.values() if a.username == username), None)
+
+    def clear(self) -> None:
+        self._next_id = 0
+        self._authors.clear()
 
 
 author_repository = AuthorRepository()
-

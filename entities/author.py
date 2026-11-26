@@ -1,24 +1,20 @@
-from dto.AuthCreateRequest import AuthCreateRequest
+from dataclasses import dataclass, field
+
 from entities.book import Book
 
 
+@dataclass
 class Author:
-    def __init__(self, authRequest: AuthCreateRequest):
-        self.ID = -1
-        self.first_name = authRequest.first_name
-        self.last_name = authRequest.last_name
-        self.image_url = authRequest.image_url
-        self.books = []
-        self.password = authRequest.password
-        self.username = authRequest.username
+    first_name: str
+    last_name: str
+    username: str
+    password_hash: str
+    image_url: str | None = None
+    ID: int = -1
+    books: list[Book] = field(default_factory=list)
 
-
-    def calculate_rating(self):
-        if len(self.books) == 0:
-            return 0
-
-        rating = 0
-        for book in self.books:
-            rating += book.rating
-
-        return rating / len(self.books)
+    def calculate_rating(self) -> float:
+        rated = [b.rating for b in self.books if b.rating is not None]
+        if not rated:
+            return 0.0
+        return round(sum(rated) / len(rated), 2)
